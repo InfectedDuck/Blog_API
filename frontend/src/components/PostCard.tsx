@@ -6,6 +6,7 @@ import { formatDate, stripHtml } from '../lib/utils';
 
 export default function PostCard({ post }: { post: Post }) {
   const excerpt = post.excerpt || stripHtml(post.content).slice(0, 160) + '...';
+  const authorName = post.author.displayName || post.author.username;
 
   return (
     <article className="p-6 rounded-2xl hover:shadow-md transition-shadow duration-300">
@@ -33,7 +34,16 @@ export default function PostCard({ post }: { post: Post }) {
       </p>
 
       <div className="flex items-center gap-2 text-xs text-text-muted">
-        <Link href={`/profile/${post.author.username}`} className="hover:text-text-secondary transition">{post.author.username}</Link>
+        <Link href={`/profile/${post.author.username}`} className="flex items-center gap-1.5 hover:text-text-secondary transition">
+          {post.author.avatarUrl ? (
+            <img src={post.author.avatarUrl} alt="" className="w-5 h-5 rounded-full object-cover" />
+          ) : (
+            <div className="w-5 h-5 rounded-full bg-accent flex items-center justify-center text-[10px] font-medium text-text-primary">
+              {authorName[0].toUpperCase()}
+            </div>
+          )}
+          {authorName}
+        </Link>
         <span>·</span>
         <span>{formatDate(post.publishedAt || post.createdAt)}</span>
         <span>·</span>

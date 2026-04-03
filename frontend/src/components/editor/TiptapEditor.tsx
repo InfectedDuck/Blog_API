@@ -2,7 +2,6 @@
 
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import UnderlineExt from '@tiptap/extension-underline';
 import { TextStyle, FontFamily, FontSize } from '@tiptap/extension-text-style';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
@@ -18,7 +17,6 @@ export default function TiptapEditor({ content, onChange, placeholder }: TiptapE
   const editor = useEditor({
     extensions: [
       StarterKit,
-      UnderlineExt,
       TextStyle,
       FontFamily,
       FontSize,
@@ -26,12 +24,14 @@ export default function TiptapEditor({ content, onChange, placeholder }: TiptapE
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content,
+    immediatelyRender: false,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
         class: 'min-h-[500px] px-4 py-4 outline-none text-text-primary leading-relaxed',
+        style: 'font-size: 16px;',
       },
     },
   });

@@ -25,4 +25,10 @@ export class CreatePostDto {
   @IsArray()
   @IsInt({ each: true })
   tagIds?: number[];
+
+  @ApiPropertyOptional({ example: ['typescript', 'backend'], type: [String] })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tagNames?: string[];
 }

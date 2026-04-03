@@ -26,11 +26,23 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column({ default: 'reader' })
+  @Column({ default: 'author' })
   role: string;
 
   @Column({ nullable: true })
+  displayName: string;
+
+  @Column({ nullable: true })
   bio: string;
+
+  @Column({ nullable: true })
+  avatarUrl: string;
+
+  @Column({ default: false })
+  darkMode: boolean;
+
+  @Column({ default: 'lavender' })
+  accentColor: string;
 
   @CreateDateColumn()
   createdAt: Date;

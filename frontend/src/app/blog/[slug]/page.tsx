@@ -66,8 +66,17 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
       </h1>
 
       {/* Meta */}
-      <div className="flex items-center gap-2 text-sm text-text-muted mb-8">
-        <Link href={`/profile/${post.author.username}`} className="hover:text-text-secondary transition">By {post.author.username}</Link>
+      <div className="flex items-center gap-3 text-sm text-text-muted mb-8">
+        <Link href={`/profile/${post.author.username}`} className="flex items-center gap-2 hover:text-text-secondary transition">
+          {post.author.avatarUrl ? (
+            <img src={post.author.avatarUrl} alt="" className="w-6 h-6 rounded-full object-cover" />
+          ) : (
+            <div className="w-6 h-6 rounded-full bg-accent flex items-center justify-center text-xs font-medium text-text-primary">
+              {(post.author.displayName || post.author.username)[0].toUpperCase()}
+            </div>
+          )}
+          {post.author.displayName || post.author.username}
+        </Link>
         <span>·</span>
         <span>{formatDate(post.publishedAt || post.createdAt)}</span>
         <span>·</span>
@@ -92,7 +101,7 @@ export default function BlogPostPage({ params }: { params: Promise<{ slug: strin
       </div>
 
       {/* AI Analysis - only for logged in users */}
-      {user && <AiAnalysis postId={post.id} />}
+      {user && <AiAnalysis postId={post.id} isOwnPost={user.id === post.author.id} />}
 
       {/* Comments */}
       <CommentSection postId={post.id} />

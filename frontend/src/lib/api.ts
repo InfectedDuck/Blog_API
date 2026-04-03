@@ -50,6 +50,18 @@ export const register = (data: { email: string; username: string; password: stri
 
 export const getProfile = () => apiFetch<User>('/auth/profile');
 
+export const updateUserProfile = (data: {
+  displayName?: string;
+  bio?: string;
+  avatarUrl?: string;
+  darkMode?: boolean;
+  accentColor?: string;
+}) =>
+  apiFetch<User>('/auth/profile', { method: 'PATCH', body: JSON.stringify(data) });
+
+export const changePassword = (data: { currentPassword: string; newPassword: string }) =>
+  apiFetch<{ message: string }>('/auth/password', { method: 'PATCH', body: JSON.stringify(data) });
+
 // Posts
 export const getPosts = (params?: Record<string, string | number>) => {
   const query = params
@@ -119,7 +131,11 @@ export interface User {
   email: string;
   username: string;
   role: string;
+  displayName?: string;
   bio?: string;
+  avatarUrl?: string;
+  darkMode: boolean;
+  accentColor: string;
   createdAt: string;
 }
 
@@ -148,7 +164,9 @@ export interface Comment {
 export interface PublicProfile {
   id: number;
   username: string;
+  displayName?: string;
   bio?: string;
+  avatarUrl?: string;
   role: string;
   createdAt: string;
 }
@@ -172,6 +190,7 @@ export interface CreatePostData {
   excerpt?: string;
   status?: string;
   tagIds?: number[];
+  tagNames?: string[];
 }
 
 export interface AuthorStats {

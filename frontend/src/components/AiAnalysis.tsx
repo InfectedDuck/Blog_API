@@ -2,22 +2,34 @@
 
 import { useState } from 'react';
 import Markdown from 'react-markdown';
-import { Sparkles, Heart, PenTool, Lightbulb, FileText } from 'lucide-react';
+import { Sparkles, Heart, PenTool, Lightbulb, FileText, ListChecks } from 'lucide-react';
 import { analyzePost, type AnalysisResult } from '../lib/api';
 
-const MODES = [
+const OWN_MODES = [
   { id: 'emotional-support', label: 'Emotional Support', icon: Heart, color: 'bg-pastel-pink' },
-  { id: 'writing-feedback', label: 'Writing Feedback', icon: PenTool, color: 'bg-pastel-blue' },
+  { id: 'writing-feedback', label: 'Refine My Text', icon: PenTool, color: 'bg-pastel-blue' },
   { id: 'topic-insights', label: 'Topic Insights', icon: Lightbulb, color: 'bg-pastel-lavender' },
   { id: 'content-summary', label: 'Summary', icon: FileText, color: 'bg-pastel-mint' },
 ];
 
-export default function AiAnalysis({ postId }: { postId: number }) {
+const OTHER_MODES = [
+  { id: 'content-summary', label: 'Summarize', icon: FileText, color: 'bg-pastel-mint' },
+  { id: 'topic-insights', label: 'Key Takeaways', icon: ListChecks, color: 'bg-pastel-lavender' },
+];
+
+interface AiAnalysisProps {
+  postId: number;
+  isOwnPost: boolean;
+}
+
+export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
   const [expanded, setExpanded] = useState(false);
   const [selectedMode, setSelectedMode] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const modes = isOwnPost ? OWN_MODES : OTHER_MODES;
 
   const handleAnalyze = async () => {
     if (!selectedMode || loading) return;
@@ -42,7 +54,7 @@ export default function AiAnalysis({ postId }: { postId: number }) {
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-secondary text-sm text-text-secondary hover:bg-surface-tertiary transition"
         >
           <Sparkles size={16} />
-          AI Analysis
+          {isOwnPost ? 'AI Analysis' : 'AI Summary'}
         </button>
       </div>
     );
@@ -53,7 +65,7 @@ export default function AiAnalysis({ postId }: { postId: number }) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 text-sm font-medium text-text-primary">
           <Sparkles size={16} />
-          AI Analysis
+          {isOwnPost ? 'AI Analysis' : 'AI Summary'}
         </div>
         <button
           onClick={() => setExpanded(false)}
@@ -64,8 +76,8 @@ export default function AiAnalysis({ postId }: { postId: number }) {
       </div>
 
       {/* Mode selector */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-        {MODES.map((mode) => {
+      <div className={`grid ${isOwnPost ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-2'} gap-2 mb-4`}>
+        {modes.map((mode) => {
           const Icon = mode.icon;
           return (
             <button

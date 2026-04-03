@@ -132,11 +132,11 @@ export default function EditorToolbar({ editor }: ToolbarProps) {
         className="px-2 py-1.5 rounded-lg text-xs bg-surface-secondary text-text-secondary border-none outline-none cursor-pointer"
         title="Font size"
       >
-        <option value="default">Normal</option>
-        <option value="14px">Small</option>
+        <option value="default">Normal (16px)</option>
+        <option value="13px">Small</option>
         <option value="18px">Large</option>
-        <option value="20px">XL</option>
-        <option value="24px">2XL</option>
+        <option value="22px">XL</option>
+        <option value="28px">2XL</option>
       </select>
 
       <Separator />

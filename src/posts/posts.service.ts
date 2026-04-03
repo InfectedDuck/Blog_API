@@ -122,7 +122,11 @@ export class PostsService {
 
   async create(dto: CreatePostDto, authorId: number): Promise<Post> {
     const slug = await this.generateUniqueSlug(dto.title);
-    const tags = dto.tagIds ? await this.tagsService.findByIds(dto.tagIds) : [];
+    let tags = dto.tagIds ? await this.tagsService.findByIds(dto.tagIds) : [];
+    if (dto.tagNames && dto.tagNames.length > 0) {
+      const namedTags = await this.tagsService.findOrCreateByNames(dto.tagNames);
+      tags = [...tags, ...namedTags];
+    }
 
     const post = this.postsRepository.create({
       title: dto.title,

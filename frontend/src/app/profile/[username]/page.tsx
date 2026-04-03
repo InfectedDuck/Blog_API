@@ -44,13 +44,19 @@ export default function ProfilePage({ params }: { params: Promise<{ username: st
       {/* Profile header */}
       <div className="mb-10 pb-8 border-b border-surface-tertiary">
         <div className="flex items-center gap-4 mb-3">
-          <div className="w-14 h-14 rounded-full bg-pastel-lavender flex items-center justify-center text-xl font-semibold text-text-primary">
-            {profile.username[0].toUpperCase()}
-          </div>
+          {profile.avatarUrl ? (
+            <img src={profile.avatarUrl} alt="" className="w-16 h-16 rounded-full object-cover" />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center text-2xl font-semibold text-text-primary">
+              {(profile.displayName || profile.username)[0].toUpperCase()}
+            </div>
+          )}
           <div>
-            <h1 className="text-2xl font-semibold text-text-primary">{profile.username}</h1>
+            <h1 className="text-2xl font-semibold text-text-primary">
+              {profile.displayName || profile.username}
+            </h1>
             <div className="flex items-center gap-2 text-sm text-text-muted">
-              <span className="px-2 py-0.5 text-xs rounded-full bg-pastel-mint">{profile.role}</span>
+              {profile.displayName && <span>@{profile.username}</span>}
               <span>·</span>
               <span>Joined {formatDate(profile.createdAt)}</span>
             </div>

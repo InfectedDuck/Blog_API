@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
+import Logo from '../../components/Logo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -21,7 +22,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      setError(err.message || 'Кіру сәтсіз аяқталды');
     } finally {
       setLoading(false);
     }
@@ -30,9 +31,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <div className="bg-white rounded-2xl shadow-sm border border-pastel-pink p-8">
+        <div className="flex justify-center mb-6">
+          <Logo size="md" />
+        </div>
+        <div className="bg-surface-secondary rounded-2xl shadow-sm border border-surface-tertiary p-8">
           <h1 className="text-2xl font-light text-center text-text-primary mb-8">
-            welcome back
+            Қайта қош келдіңіз
           </h1>
 
           {error && (
@@ -42,39 +46,35 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition"
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition"
-              />
-            </div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
+            />
+            <input
+              type="password"
+              placeholder="Құпия сөз — Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
+            />
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-pastel-lavender hover:bg-pastel-lavender-dark text-text-primary text-sm font-medium transition disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-dark text-text-primary text-sm font-medium transition disabled:opacity-50"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Кіруде...' : 'Кіру — Sign In'}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-text-muted">
-            Don&apos;t have an account?{' '}
+            Аккаунтыңыз жоқ па?{' '}
             <Link href="/register" className="text-text-secondary hover:text-text-primary transition">
-              Sign up
+              Тіркелу
             </Link>
           </p>
         </div>

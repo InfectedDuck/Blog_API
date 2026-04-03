@@ -62,10 +62,9 @@ export class PostsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('author', 'admin')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new post (author/admin)' })
+  @ApiOperation({ summary: 'Create a new post' })
   create(
     @Body() dto: CreatePostDto,
     @CurrentUser() user: { id: number },

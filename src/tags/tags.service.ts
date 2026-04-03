@@ -30,6 +30,22 @@ export class TagsService {
     return this.tagsRepository.save(tag);
   }
 
+  async findOrCreateByNames(names: string[]): Promise<Tag[]> {
+    if (!names || names.length === 0) return [];
+    const tags: Tag[] = [];
+    for (const name of names) {
+      const slug = slugify(name.trim(), { lower: true, strict: true });
+      if (!slug) continue;
+      let tag = await this.tagsRepository.findOne({ where: { slug } });
+      if (!tag) {
+        tag = this.tagsRepository.create({ name: name.trim(), slug });
+        tag = await this.tagsRepository.save(tag);
+      }
+      tags.push(tag);
+    }
+    return tags;
+  }
+
   async remove(id: number): Promise<void> {
     const tag = await this.tagsRepository.findOne({ where: { id } });
     if (!tag) throw new NotFoundException('Tag not found');

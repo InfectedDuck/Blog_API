@@ -1,28 +1,62 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createPost, getTags, type Tag } from '../../lib/api';
+import Link from 'next/link';
+import { X } from 'lucide-react';
+import { createPost } from '../../lib/api';
 import { stripHtml } from '../../lib/utils';
 import AuthGuard from '../../components/AuthGuard';
 import TiptapEditor from '../../components/editor/TiptapEditor';
 
+const MAX_TAGS = 7;
+const MIN_TAG_LENGTH = 3;
+const MAX_TAG_LENGTH = 25;
+
 function WritePage() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState('');
+  const [tagError, setTagError] = useState('');
   const [saving, setSaving] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    getTags().then(setTags).catch(() => {});
-  }, []);
+  const addTag = () => {
+    const tag = tagInput.trim();
+    setTagError('');
 
-  const toggleTag = (id: number) => {
-    setSelectedTags((prev) =>
-      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
-    );
+    if (!tag) return;
+    if (tag.length < MIN_TAG_LENGTH) {
+      setTagError(`Tag must be at least ${MIN_TAG_LENGTH} characters`);
+      return;
+    }
+    if (tag.length > MAX_TAG_LENGTH) {
+      setTagError(`Tag must be less than ${MAX_TAG_LENGTH} characters`);
+      return;
+    }
+    if (tags.length >= MAX_TAGS) {
+      setTagError(`Maximum ${MAX_TAGS} tags allowed`);
+      return;
+    }
+    if (tags.some((t) => t.toLowerCase() === tag.toLowerCase())) {
+      setTagError('Tag already added');
+      return;
+    }
+
+    setTags([...tags, tag]);
+    setTagInput('');
+  };
+
+  const removeTag = (index: number) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
+
+  const handleTagKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag();
+    }
   };
 
   const handleSave = async (status: string) => {
@@ -35,7 +69,7 @@ function WritePage() {
         content,
         excerpt,
         status,
-        tagIds: selectedTags.length > 0 ? selectedTags : undefined,
+        tagNames: tags.length > 0 ? tags : undefined,
       });
       router.push(`/blog/${post.slug}`);
     } catch {
@@ -46,58 +80,88 @@ function WritePage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="max-w-3xl mx-auto px-6 py-10">
+      {/* Top bar */}
+      <div className="flex items-center justify-between mb-8">
+        <Link href="/" className="text-sm text-text-muted hover:text-text-secondary transition">
+          ← Басты бетке
+        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleSave('draft')}
+            disabled={saving || !title.trim()}
+            className="px-4 py-2 rounded-xl bg-surface-secondary text-sm text-text-secondary hover:bg-surface-tertiary transition disabled:opacity-50"
+          >
+            Жоба — Draft
+          </button>
+          <button
+            onClick={() => handleSave('published')}
+            disabled={saving || !title.trim()}
+            className="px-4 py-2 rounded-xl bg-accent hover:bg-accent-dark text-sm text-text-primary transition disabled:opacity-50"
+          >
+            {saving ? 'Жариялануда...' : 'Жариялау — Publish'}
+          </button>
+        </div>
+      </div>
+
+      {/* Title */}
       <input
         type="text"
-        placeholder="Title"
+        placeholder="Тақырыбыңыз — Your title..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full text-3xl font-light text-text-primary placeholder:text-text-muted bg-transparent border-none outline-none mb-6"
+        autoFocus
+        className="w-full text-4xl font-light text-text-primary placeholder:text-surface-tertiary bg-transparent border-none outline-none mb-4"
       />
 
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {tags.map((tag) => (
-            <button
-              key={tag.id}
-              onClick={() => toggleTag(tag.id)}
-              className={`px-3 py-1 text-xs rounded-full transition ${
-                selectedTags.includes(tag.id)
-                  ? 'bg-pastel-mint text-text-primary'
-                  : 'bg-surface-secondary text-text-muted hover:bg-surface-tertiary'
-              }`}
+      {/* Tags */}
+      <div className="mb-6">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          {tags.map((tag, i) => (
+            <span
+              key={i}
+              className="flex items-center gap-1 px-3 py-1 text-xs rounded-full bg-pastel-mint text-text-primary"
             >
-              {tag.name}
-            </button>
+              {tag}
+              <button onClick={() => removeTag(i)} className="hover:text-red-400 transition">
+                <X size={12} />
+              </button>
+            </span>
           ))}
+          {tags.length < MAX_TAGS && (
+            <input
+              type="text"
+              placeholder={tags.length === 0 ? 'Тег қосу (Enter)...' : 'Тағы қосу...'}
+              value={tagInput}
+              onChange={(e) => { setTagInput(e.target.value); setTagError(''); }}
+              onKeyDown={handleTagKeyDown}
+              onBlur={addTag}
+              maxLength={MAX_TAG_LENGTH}
+              className="flex-1 min-w-[140px] px-2 py-1 text-sm text-text-primary placeholder:text-text-muted bg-transparent border-none outline-none"
+            />
+          )}
         </div>
-      )}
-
-      <TiptapEditor content="" onChange={setContent} />
-
-      <div className="flex justify-end gap-3 mt-6">
-        <button
-          onClick={() => handleSave('draft')}
-          disabled={saving || !title.trim()}
-          className="px-5 py-2.5 rounded-xl bg-surface-secondary text-sm text-text-secondary hover:bg-surface-tertiary transition disabled:opacity-50"
-        >
-          Save Draft
-        </button>
-        <button
-          onClick={() => handleSave('published')}
-          disabled={saving || !title.trim()}
-          className="px-5 py-2.5 rounded-xl bg-pastel-lavender hover:bg-pastel-lavender-dark text-sm text-text-primary transition disabled:opacity-50"
-        >
-          {saving ? 'Publishing...' : 'Publish'}
-        </button>
+        {tagError && (
+          <p className="text-xs text-red-400">{tagError}</p>
+        )}
+        <p className="text-xs text-text-muted">
+          {tags.length}/{MAX_TAGS} tags · {MIN_TAG_LENGTH}-{MAX_TAG_LENGTH} characters each
+        </p>
       </div>
+
+      {/* Editor */}
+      <TiptapEditor
+        content=""
+        onChange={setContent}
+        placeholder="Өз тарихыңызды жазыңыз..."
+      />
     </div>
   );
 }
 
 export default function WritePageWrapper() {
   return (
-    <AuthGuard requiredRoles={['author', 'admin']}>
+    <AuthGuard>
       <WritePage />
     </AuthGuard>
   );

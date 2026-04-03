@@ -165,7 +165,7 @@ function StatsPage() {
 
 export default function StatsPageWrapper() {
   return (
-    <AuthGuard requiredRoles={['author', 'admin']}>
+    <AuthGuard>
       <StatsPage />
     </AuthGuard>
   );

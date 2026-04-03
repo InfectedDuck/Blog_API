@@ -8,7 +8,7 @@ export class OllamaService {
 
   constructor(private configService: ConfigService) {
     this.baseUrl = this.configService.get<string>('OLLAMA_URL', 'http://localhost:11434');
-    this.model = this.configService.get<string>('OLLAMA_MODEL', 'mistral');
+    this.model = this.configService.get<string>('OLLAMA_MODEL', 'mistral:7b-instruct-q4_0');
   }
 
   async generate(prompt: string): Promise<string> {

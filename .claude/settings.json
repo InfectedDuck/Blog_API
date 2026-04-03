@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s http://localhost:11434/api/tags)",
+      "Bash(node -e \"const sk = require\\('@tiptap/starter-kit'\\); console.log\\(Object.keys\\(sk\\)\\)\")",
+      "Bash(node -e ':*)",
+      "Bash(node -e \"const j=require\\('fs'\\).readFileSync\\(0,'utf8'\\);const p=JSON.parse\\(j\\);console.log\\(Object.keys\\(p.dependencies||{}\\).join\\('\\\\n'\\)\\)\")"
+    ]
+  }
+}

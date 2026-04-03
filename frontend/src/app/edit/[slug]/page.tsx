@@ -149,7 +149,7 @@ function EditPage({ slug }: { slug: string }) {
 export default function EditPageWrapper({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   return (
-    <AuthGuard requiredRoles={['author', 'admin']}>
+    <AuthGuard>
       <EditPage slug={slug} />
     </AuthGuard>
   );

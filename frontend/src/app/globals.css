@@ -11,6 +11,9 @@
   --color-pastel-mint: #D1FAE5;
   --color-pastel-mint-dark: #A7F3D0;
 
+  --color-accent: #EDE9FE;
+  --color-accent-dark: #DDD6FE;
+
   --color-surface: #FEFEFE;
   --color-surface-secondary: #F8F9FA;
   --color-surface-tertiary: #F1F3F5;
@@ -23,7 +26,24 @@
 }
 
 body {
-  background-color: #FEFEFE;
-  color: #1A1A2E;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
   font-family: "Inter", system-ui, sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-surface: #0F0F1A;
+  --color-surface-secondary: #1A1A2E;
+  --color-surface-tertiary: #252540;
+
+  --color-text-primary: #E8E8ED;
+  --color-text-secondary: #B0B0C0;
+  --color-text-muted: #6A6A80;
+}
+
+/* Fix white backgrounds in dark mode */
+.dark .bg-white {
+  background-color: var(--color-surface-secondary) !important;
 }

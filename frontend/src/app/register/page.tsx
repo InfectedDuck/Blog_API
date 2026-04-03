@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
+import Logo from '../../components/Logo';
 
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -23,7 +24,7 @@ export default function RegisterPage() {
       await register({ email, username, password, bio: bio || undefined });
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      setError(err.message || 'Тіркелу сәтсіз аяқталды');
     } finally {
       setLoading(false);
     }
@@ -32,9 +33,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <div className="bg-white rounded-2xl shadow-sm border border-pastel-blue p-8">
+        <div className="flex justify-center mb-6">
+          <Logo size="md" />
+        </div>
+        <div className="bg-surface-secondary rounded-2xl shadow-sm border border-surface-tertiary p-8">
           <h1 className="text-2xl font-light text-center text-text-primary mb-8">
-            create account
+            Аккаунт құру
           </h1>
 
           {error && (
@@ -46,12 +50,12 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Пайдаланушы аты — Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               minLength={3}
-              className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition"
+              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
             />
             <input
               type="email"
@@ -59,37 +63,37 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition"
+              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
             />
             <input
               type="password"
-              placeholder="Password (min 6 characters)"
+              placeholder="Құпия сөз — Password (мин. 6)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition"
+              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
             />
             <textarea
-              placeholder="Bio (optional)"
+              placeholder="Өзіңіз туралы — Bio (міндетті емес)"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={2}
-              className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition resize-none"
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-pastel-lavender hover:bg-pastel-lavender-dark text-text-primary text-sm font-medium transition disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-dark text-text-primary text-sm font-medium transition disabled:opacity-50"
             >
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? 'Тіркелуде...' : 'Тіркелу — Sign Up'}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-text-muted">
-            Already have an account?{' '}
+            Аккаунтыңыз бар ма?{' '}
             <Link href="/login" className="text-text-secondary hover:text-text-primary transition">
-              Sign in
+              Кіру
             </Link>
           </p>
         </div>
