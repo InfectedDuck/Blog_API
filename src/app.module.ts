@@ -8,6 +8,9 @@ import { CommentsModule } from './comments/comments.module.js';
 import { TagsModule } from './tags/tags.module.js';
 import { LikesModule } from './likes/likes.module.js';
 import { AiModule } from './ai/ai.module.js';
+import { FollowsModule } from './follows/follows.module.js';
+import { BookmarksModule } from './bookmarks/bookmarks.module.js';
+import { NotificationsModule } from './notifications/notifications.module.js';
 
 @Module({
   imports: [
@@ -25,6 +28,9 @@ import { AiModule } from './ai/ai.module.js';
     TagsModule,
     LikesModule,
     AiModule,
+    NotificationsModule,
+    FollowsModule,
+    BookmarksModule,
   ],
 })
 export class AppModule {}

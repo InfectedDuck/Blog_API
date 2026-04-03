@@ -6,10 +6,13 @@ import { getAuthorStats, type AuthorStats } from '../../lib/api';
 import { formatDate } from '../../lib/utils';
 import AuthGuard from '../../components/AuthGuard';
 import StatsCard from '../../components/StatsCard';
+import { SkeletonLine } from '../../components/Skeleton';
+import { useLang } from '../../context/LangContext';
 
 function StatsPage() {
   const [stats, setStats] = useState<AuthorStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useLang();
 
   useEffect(() => {
     getAuthorStats()
@@ -19,37 +22,47 @@ function StatsPage() {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-20 text-text-muted">Loading...</div>;
+    return (
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <SkeletonLine width="150px" height="28px" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+          {[1,2,3,4].map(i => <div key={i} className="h-24 rounded-2xl bg-surface-tertiary animate-pulse" />)}
+        </div>
+        <div className="mt-10 space-y-4">
+          {[1,2,3].map(i => <SkeletonLine key={i} width="100%" height="48px" />)}
+        </div>
+      </div>
+    );
   }
 
   if (!stats) {
-    return <div className="text-center py-20 text-text-muted">Unable to load stats</div>;
+    return <div className="text-center py-20 text-text-muted">{t('common.loading')}</div>;
   }
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-light text-text-primary mb-8">Your Stats</h1>
+      <h1 className="text-2xl font-light text-text-primary mb-8">{t('stats.title')}</h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         <StatsCard
-          label="Total Posts"
+          label={t('stats.totalPosts')}
           value={stats.totals.totalPosts}
-          sublabel={`${stats.totals.totalPublished} published, ${stats.totals.totalDrafts} drafts`}
+          sublabel={`${stats.totals.totalPublished} ${t('stats.published')}, ${stats.totals.totalDrafts} ${t('stats.drafts')}`}
           bgColor="bg-pastel-pink"
         />
         <StatsCard
-          label="Total Views"
+          label={t('stats.totalViews')}
           value={stats.totals.totalViews}
           bgColor="bg-pastel-blue"
         />
         <StatsCard
-          label="Total Likes"
+          label={t('stats.totalLikes')}
           value={stats.totals.totalLikes}
           bgColor="bg-pastel-lavender"
         />
         <StatsCard
-          label="Total Comments"
+          label={t('stats.totalComments')}
           value={stats.totals.totalComments}
           bgColor="bg-pastel-mint"
         />
@@ -58,9 +71,9 @@ function StatsPage() {
       {/* Posts Table */}
       {stats.posts.length === 0 ? (
         <div className="text-center py-10 text-text-muted">
-          No posts yet.{' '}
+          {t('stats.noPosts')}{' '}
           <Link href="/write" className="text-text-secondary hover:text-text-primary transition">
-            Write your first story
+            {t('stats.writeFirst')}
           </Link>
         </div>
       ) : (
@@ -70,12 +83,12 @@ function StatsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-text-muted border-b border-surface-tertiary">
-                  <th className="pb-3 font-medium">Title</th>
-                  <th className="pb-3 font-medium">Status</th>
-                  <th className="pb-3 font-medium text-right">Views</th>
-                  <th className="pb-3 font-medium text-right">Likes</th>
-                  <th className="pb-3 font-medium text-right">Comments</th>
-                  <th className="pb-3 font-medium text-right">Date</th>
+                  <th className="pb-3 font-medium">{t('stats.colTitle')}</th>
+                  <th className="pb-3 font-medium">{t('stats.colStatus')}</th>
+                  <th className="pb-3 font-medium text-right">{t('stats.colViews')}</th>
+                  <th className="pb-3 font-medium text-right">{t('stats.colLikes')}</th>
+                  <th className="pb-3 font-medium text-right">{t('stats.colComments')}</th>
+                  <th className="pb-3 font-medium text-right">{t('stats.colDate')}</th>
                   <th className="pb-3"></th>
                 </tr>
               </thead>
@@ -110,7 +123,7 @@ function StatsPage() {
                         href={`/edit/${post.slug}`}
                         className="text-xs text-text-muted hover:text-text-primary transition"
                       >
-                        Edit
+                        {t('stats.edit')}
                       </Link>
                     </td>
                   </tr>
@@ -151,7 +164,7 @@ function StatsPage() {
                     href={`/edit/${post.slug}`}
                     className="text-xs text-text-muted hover:text-text-primary transition"
                   >
-                    Edit
+                    {t('stats.edit')}
                   </Link>
                 </div>
               </div>

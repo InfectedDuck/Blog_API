@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Like } from './entities/like.entity.js';
 import { LikesService } from './likes.service.js';
 import { LikesController } from './likes.controller.js';
+import { NotificationsModule } from '../notifications/notifications.module.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Like])],
+  imports: [TypeOrmModule.forFeature([Like]), NotificationsModule],
   controllers: [LikesController],
   providers: [LikesService],
   exports: [LikesService],

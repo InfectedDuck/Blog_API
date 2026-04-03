@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getComments, createComment, type Comment } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LangContext';
 import { timeAgo } from '../lib/utils';
 
 export default function CommentSection({ postId }: { postId: number }) {
@@ -12,6 +13,7 @@ export default function CommentSection({ postId }: { postId: number }) {
   const [body, setBody] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { user } = useAuth();
+  const { t } = useLang();
 
   useEffect(() => {
     loadComments();
@@ -46,7 +48,7 @@ export default function CommentSection({ postId }: { postId: number }) {
   return (
     <div className="mt-12">
       <h3 className="text-lg font-medium text-text-primary mb-6">
-        Comments ({total})
+        {t('comments.title')} ({total})
       </h3>
 
       {user && (
@@ -54,7 +56,7 @@ export default function CommentSection({ postId }: { postId: number }) {
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Share your thoughts..."
+            placeholder={t('comments.placeholder')}
             rows={3}
             className="w-full px-4 py-3 rounded-xl bg-surface-secondary border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-pastel-lavender transition resize-none"
           />
@@ -64,7 +66,7 @@ export default function CommentSection({ postId }: { postId: number }) {
               disabled={submitting || !body.trim()}
               className="px-5 py-2 rounded-xl bg-pastel-lavender hover:bg-pastel-lavender-dark text-sm text-text-primary transition disabled:opacity-50"
             >
-              {submitting ? 'Posting...' : 'Comment'}
+              {submitting ? t('comments.submitting') : t('comments.submit')}
             </button>
           </div>
         </form>
@@ -97,7 +99,7 @@ export default function CommentSection({ postId }: { postId: number }) {
 
       {comments.length === 0 && (
         <p className="text-sm text-text-muted text-center py-4">
-          No comments yet. Be the first to share your thoughts.
+          {t('comments.empty')}
         </p>
       )}
     </div>

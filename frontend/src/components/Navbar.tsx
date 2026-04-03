@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
+import { useLang } from '../context/LangContext';
 import { useState } from 'react';
 import Logo from './Logo';
+import NotificationBell from './NotificationBell';
 
 export default function Navbar() {
   const { user, isLoading, logout } = useAuth();
+  const { t } = useLang();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -24,11 +27,12 @@ export default function Navbar() {
                   href="/write"
                   className="px-4 py-1.5 text-sm rounded-full bg-accent hover:bg-accent-dark text-text-primary transition"
                 >
-                  Write
+                  {t('nav.write')}
                 </Link>
-                <Link href="/stats" className="text-sm text-text-secondary hover:text-text-primary transition">
-                  Stats
+                <Link href="/stats" className="text-sm text-text-secondary hover:text-text-primary transition hidden sm:block">
+                  {t('nav.stats')}
                 </Link>
+                <NotificationBell />
                 <div className="relative">
                   <button
                     onClick={() => setMenuOpen(!menuOpen)}
@@ -41,7 +45,7 @@ export default function Navbar() {
                         {(user.displayName || user.username)[0].toUpperCase()}
                       </div>
                     )}
-                    {user.displayName || user.username}
+                    <span className="hidden sm:inline">{user.displayName || user.username}</span>
                   </button>
                   {menuOpen && (
                     <div className="absolute right-0 mt-2 w-44 bg-surface-secondary rounded-xl shadow-lg border border-surface-tertiary py-2">
@@ -50,21 +54,35 @@ export default function Navbar() {
                         onClick={() => setMenuOpen(false)}
                         className="block px-4 py-2 text-sm text-text-secondary hover:bg-surface-tertiary transition"
                       >
-                        My Profile
+                        {t('nav.myProfile')}
+                      </Link>
+                      <Link
+                        href="/stats"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-text-secondary hover:bg-surface-tertiary transition sm:hidden"
+                      >
+                        {t('nav.stats')}
+                      </Link>
+                      <Link
+                        href="/bookmarks"
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-text-secondary hover:bg-surface-tertiary transition"
+                      >
+                        {t('bookmark.title')}
                       </Link>
                       <Link
                         href="/settings"
                         onClick={() => setMenuOpen(false)}
                         className="block px-4 py-2 text-sm text-text-secondary hover:bg-surface-tertiary transition"
                       >
-                        Settings
+                        {t('nav.settings')}
                       </Link>
                       <hr className="my-1 border-surface-tertiary" />
                       <button
                         onClick={() => { logout(); setMenuOpen(false); }}
                         className="w-full text-left px-4 py-2 text-sm text-text-secondary hover:bg-surface-tertiary transition"
                       >
-                        Sign Out
+                        {t('nav.signOut')}
                       </button>
                     </div>
                   )}
@@ -72,7 +90,7 @@ export default function Navbar() {
               </>
             ) : (
               <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition">
-                Sign In
+                {t('nav.signIn')}
               </Link>
             )}
           </div>

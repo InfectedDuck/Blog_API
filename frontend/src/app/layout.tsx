@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
+import { LangProvider } from "../context/LangContext";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import Onboarding from "../components/Onboarding";
 
 export const metadata: Metadata = {
   title: "BirgeBolis — Қазақша блог платформасы",
@@ -15,16 +18,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+    <html lang="kk" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-surface text-text-primary font-sans">
         <AuthProvider>
-          <ThemeProvider>
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <footer className="py-8 text-center text-sm text-text-muted">
-              BirgeBolis — Бірге боліс ❤
-            </footer>
-          </ThemeProvider>
+          <LangProvider>
+            <ThemeProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <Onboarding />
+            </ThemeProvider>
+          </LangProvider>
         </AuthProvider>
       </body>
     </html>

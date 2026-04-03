@@ -11,8 +11,8 @@
   --color-pastel-mint: #D1FAE5;
   --color-pastel-mint-dark: #A7F3D0;
 
-  --color-accent: #EDE9FE;
-  --color-accent-dark: #DDD6FE;
+  --color-accent: var(--accent-color, #EDE9FE);
+  --color-accent-dark: var(--accent-color-dark, #DDD6FE);
 
   --color-surface: #FEFEFE;
   --color-surface-secondary: #F8F9FA;
@@ -23,6 +23,25 @@
   --color-text-muted: #8A8AA3;
 
   --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* Accent color schemes via data attribute */
+:root,
+[data-accent="lavender"] {
+  --accent-color: #EDE9FE;
+  --accent-color-dark: #DDD6FE;
+}
+[data-accent="pink"] {
+  --accent-color: #FFE4E6;
+  --accent-color-dark: #FBC4C8;
+}
+[data-accent="blue"] {
+  --accent-color: #DBEAFE;
+  --accent-color-dark: #BFDBFE;
+}
+[data-accent="mint"] {
+  --accent-color: #D1FAE5;
+  --accent-color-dark: #A7F3D0;
 }
 
 body {
@@ -46,4 +65,49 @@ body {
 /* Fix white backgrounds in dark mode */
 .dark .bg-white {
   background-color: var(--color-surface-secondary) !important;
+}
+
+/* Smooth page transitions */
+main {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Better prose in dark mode */
+.dark .prose {
+  --tw-prose-body: var(--color-text-secondary);
+  --tw-prose-headings: var(--color-text-primary);
+  --tw-prose-links: var(--accent-color-dark);
+  --tw-prose-bold: var(--color-text-primary);
+  --tw-prose-code: var(--color-text-primary);
+  --tw-prose-quotes: var(--color-text-secondary);
+  --tw-prose-quote-borders: var(--color-surface-tertiary);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-tertiary);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Better mobile tap targets */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
 }

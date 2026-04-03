@@ -8,6 +8,7 @@ import { createPost } from '../../lib/api';
 import { stripHtml } from '../../lib/utils';
 import AuthGuard from '../../components/AuthGuard';
 import TiptapEditor from '../../components/editor/TiptapEditor';
+import { useLang } from '../../context/LangContext';
 
 const MAX_TAGS = 7;
 const MIN_TAG_LENGTH = 3;
@@ -21,6 +22,7 @@ function WritePage() {
   const [tagError, setTagError] = useState('');
   const [saving, setSaving] = useState(false);
   const router = useRouter();
+  const { t } = useLang();
 
   const addTag = () => {
     const tag = tagInput.trim();
@@ -84,7 +86,7 @@ function WritePage() {
       {/* Top bar */}
       <div className="flex items-center justify-between mb-8">
         <Link href="/" className="text-sm text-text-muted hover:text-text-secondary transition">
-          ← Басты бетке
+          {t('write.back')}
         </Link>
         <div className="flex gap-3">
           <button
@@ -92,14 +94,14 @@ function WritePage() {
             disabled={saving || !title.trim()}
             className="px-4 py-2 rounded-xl bg-surface-secondary text-sm text-text-secondary hover:bg-surface-tertiary transition disabled:opacity-50"
           >
-            Жоба — Draft
+            {t('write.draft')}
           </button>
           <button
             onClick={() => handleSave('published')}
             disabled={saving || !title.trim()}
             className="px-4 py-2 rounded-xl bg-accent hover:bg-accent-dark text-sm text-text-primary transition disabled:opacity-50"
           >
-            {saving ? 'Жариялануда...' : 'Жариялау — Publish'}
+            {saving ? t('write.publishing') : t('write.publish')}
           </button>
         </div>
       </div>
@@ -107,7 +109,7 @@ function WritePage() {
       {/* Title */}
       <input
         type="text"
-        placeholder="Тақырыбыңыз — Your title..."
+        placeholder={t('write.titlePlaceholder')}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         autoFocus
@@ -131,7 +133,7 @@ function WritePage() {
           {tags.length < MAX_TAGS && (
             <input
               type="text"
-              placeholder={tags.length === 0 ? 'Тег қосу (Enter)...' : 'Тағы қосу...'}
+              placeholder={tags.length === 0 ? t('write.addTags') : t('write.addMore')}
               value={tagInput}
               onChange={(e) => { setTagInput(e.target.value); setTagError(''); }}
               onKeyDown={handleTagKeyDown}
@@ -153,7 +155,7 @@ function WritePage() {
       <TiptapEditor
         content=""
         onChange={setContent}
-        placeholder="Өз тарихыңызды жазыңыз..."
+        placeholder={t('write.editorPlaceholder')}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { Comment } from './entities/comment.entity';
+import { NotificationsService } from '../notifications/notifications.service';
 
 describe('CommentsService', () => {
   let service: CommentsService;
@@ -28,6 +29,7 @@ describe('CommentsService', () => {
       providers: [
         CommentsService,
         { provide: getRepositoryToken(Comment), useValue: mockRepository },
+        { provide: NotificationsService, useValue: { create: jest.fn() } },
       ],
     }).compile();
 

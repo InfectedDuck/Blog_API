@@ -13,13 +13,6 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
-const ACCENT_COLORS: Record<string, Record<string, string>> = {
-  pink: { accent: '#FFE4E6', 'accent-dark': '#FBC4C8' },
-  blue: { accent: '#DBEAFE', 'accent-dark': '#BFDBFE' },
-  lavender: { accent: '#EDE9FE', 'accent-dark': '#DDD6FE' },
-  mint: { accent: '#D1FAE5', 'accent-dark': '#A7F3D0' },
-};
-
 function applyTheme(dark: boolean, accent: string) {
   const root = document.documentElement;
   if (dark) {
@@ -27,9 +20,7 @@ function applyTheme(dark: boolean, accent: string) {
   } else {
     root.classList.remove('dark');
   }
-  const colors = ACCENT_COLORS[accent] || ACCENT_COLORS.lavender;
-  root.style.setProperty('--color-accent', colors.accent);
-  root.style.setProperty('--color-accent-dark', colors['accent-dark']);
+  root.setAttribute('data-accent', accent);
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

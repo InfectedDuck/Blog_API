@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Like } from './entities/like.entity.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 
 @Injectable()
 export class LikesService {
   constructor(
     @InjectRepository(Like)
     private likesRepository: Repository<Like>,
+    private notificationsService: NotificationsService,
   ) {}
 
   async toggle(postId: number, userId: number) {
@@ -25,7 +27,21 @@ export class LikesService {
       post: { id: postId } as any,
       user: { id: userId } as any,
     });
-    await this.likesRepository.save(like);
+    const saved = await this.likesRepository.save(like);
+    // Find post author for notification
+    const likeWithPost = await this.likesRepository.findOne({
+      where: { id: saved.id },
+      relations: ['post', 'post.author'],
+    });
+    if (likeWithPost?.post?.author) {
+      await this.notificationsService.create({
+        recipientId: likeWithPost.post.author.id,
+        actorId: userId,
+        type: 'like',
+        message: 'liked your post',
+        link: `/blog/${likeWithPost.post.slug}`,
+      });
+    }
     const totalLikes = await this.countByPost(postId);
     return { liked: true, totalLikes };
   }

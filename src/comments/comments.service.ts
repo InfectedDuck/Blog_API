@@ -8,12 +8,14 @@ import { Repository } from 'typeorm';
 import { Comment } from './entities/comment.entity.js';
 import { CreateCommentDto } from './dto/create-comment.dto.js';
 import { UpdateCommentDto } from './dto/update-comment.dto.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private commentsRepository: Repository<Comment>,
+    private notificationsService: NotificationsService,
   ) {}
 
   async findByPost(postId: number, page = 1, limit = 10) {
@@ -38,6 +40,20 @@ export class CommentsService {
       author: { id: authorId } as any,
     });
     const saved = await this.commentsRepository.save(comment);
+    // Notify post author
+    const commentWithPost = await this.commentsRepository.findOne({
+      where: { id: saved.id },
+      relations: ['post', 'post.author'],
+    });
+    if (commentWithPost?.post?.author) {
+      await this.notificationsService.create({
+        recipientId: commentWithPost.post.author.id,
+        actorId: authorId,
+        type: 'comment',
+        message: 'commented on your post',
+        link: `/blog/${commentWithPost.post.slug}`,
+      });
+    }
     return this.commentsRepository.findOne({
       where: { id: saved.id },
       relations: ['author'],

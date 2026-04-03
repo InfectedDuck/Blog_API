@@ -4,17 +4,19 @@ import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { Sparkles, Heart, PenTool, Lightbulb, FileText, ListChecks } from 'lucide-react';
 import { analyzePost, type AnalysisResult } from '../lib/api';
+import { useLang } from '../context/LangContext';
+import type { TranslationKey } from '../lib/i18n';
 
-const OWN_MODES = [
-  { id: 'emotional-support', label: 'Emotional Support', icon: Heart, color: 'bg-pastel-pink' },
-  { id: 'writing-feedback', label: 'Refine My Text', icon: PenTool, color: 'bg-pastel-blue' },
-  { id: 'topic-insights', label: 'Topic Insights', icon: Lightbulb, color: 'bg-pastel-lavender' },
-  { id: 'content-summary', label: 'Summary', icon: FileText, color: 'bg-pastel-mint' },
+const OWN_MODES: { id: string; labelKey: TranslationKey; icon: any; color: string }[] = [
+  { id: 'emotional-support', labelKey: 'ai.emotionalSupport', icon: Heart, color: 'bg-pastel-pink' },
+  { id: 'writing-feedback', labelKey: 'ai.refine', icon: PenTool, color: 'bg-pastel-blue' },
+  { id: 'topic-insights', labelKey: 'ai.insights', icon: Lightbulb, color: 'bg-pastel-lavender' },
+  { id: 'content-summary', labelKey: 'ai.summary', icon: FileText, color: 'bg-pastel-mint' },
 ];
 
-const OTHER_MODES = [
-  { id: 'content-summary', label: 'Summarize', icon: FileText, color: 'bg-pastel-mint' },
-  { id: 'topic-insights', label: 'Key Takeaways', icon: ListChecks, color: 'bg-pastel-lavender' },
+const OTHER_MODES: { id: string; labelKey: TranslationKey; icon: any; color: string }[] = [
+  { id: 'content-summary', labelKey: 'ai.summary', icon: FileText, color: 'bg-pastel-mint' },
+  { id: 'topic-insights', labelKey: 'ai.takeaways', icon: ListChecks, color: 'bg-pastel-lavender' },
 ];
 
 interface AiAnalysisProps {
@@ -23,6 +25,7 @@ interface AiAnalysisProps {
 }
 
 export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
+  const { t } = useLang();
   const [expanded, setExpanded] = useState(false);
   const [selectedMode, setSelectedMode] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -54,7 +57,7 @@ export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-secondary text-sm text-text-secondary hover:bg-surface-tertiary transition"
         >
           <Sparkles size={16} />
-          {isOwnPost ? 'AI Analysis' : 'AI Summary'}
+          {isOwnPost ? t('ai.button') : t('ai.buttonOther')}
         </button>
       </div>
     );
@@ -65,13 +68,13 @@ export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 text-sm font-medium text-text-primary">
           <Sparkles size={16} />
-          {isOwnPost ? 'AI Analysis' : 'AI Summary'}
+          {isOwnPost ? t('ai.button') : t('ai.buttonOther')}
         </div>
         <button
           onClick={() => setExpanded(false)}
           className="text-xs text-text-muted hover:text-text-primary transition"
         >
-          Close
+          {t('ai.close')}
         </button>
       </div>
 
@@ -90,7 +93,7 @@ export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
               }`}
             >
               <Icon size={14} />
-              {mode.label}
+              {t(mode.labelKey)}
             </button>
           );
         })}
@@ -101,13 +104,13 @@ export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
         disabled={!selectedMode || loading}
         className="w-full py-2.5 rounded-xl bg-pastel-lavender hover:bg-pastel-lavender-dark text-sm text-text-primary transition disabled:opacity-50 mb-4"
       >
-        {loading ? 'Analyzing...' : 'Analyze'}
+        {loading ? t('ai.analyzing') : t('ai.analyze')}
       </button>
 
       {loading && (
         <div className="text-center py-6">
           <div className="inline-block w-6 h-6 border-2 border-pastel-lavender border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-text-muted mt-2">Thinking...</p>
+          <p className="text-sm text-text-muted mt-2">{t('ai.thinking')}</p>
         </div>
       )}
 
@@ -125,8 +128,8 @@ export default function AiAnalysis({ postId, isOwnPost }: AiAnalysisProps) {
               result.nlp.sentiment.label === 'positive' ? 'text-green-500' :
               result.nlp.sentiment.label === 'negative' ? 'text-red-400' : 'text-text-muted'
             }>{result.nlp.sentiment.label} ({result.nlp.sentiment.score})</span></span>
-            <span>{result.nlp.wordCount} words</span>
-            <span>{result.nlp.readingTimeMinutes} min read</span>
+            <span>{result.nlp.wordCount} {t('ai.words')}</span>
+            <span>{result.nlp.readingTimeMinutes} {t('ai.minRead')}</span>
           </div>
 
           {/* Keywords */}

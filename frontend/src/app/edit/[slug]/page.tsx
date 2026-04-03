@@ -6,6 +6,7 @@ import { getPostBySlug, updatePost, deletePost, getTags, type Post, type Tag } f
 import { stripHtml } from '../../../lib/utils';
 import AuthGuard from '../../../components/AuthGuard';
 import TiptapEditor from '../../../components/editor/TiptapEditor';
+import { useLang } from '../../../context/LangContext';
 
 function EditPage({ slug }: { slug: string }) {
   const [post, setPost] = useState<Post | null>(null);
@@ -16,15 +17,16 @@ function EditPage({ slug }: { slug: string }) {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { t } = useLang();
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [p, t] = await Promise.all([getPostBySlug(slug), getTags()]);
+        const [p, fetchedTags] = await Promise.all([getPostBySlug(slug), getTags()]);
         setPost(p);
         setTitle(p.title);
         setContent(p.content);
-        setTags(t);
+        setTags(fetchedTags);
         setSelectedTags(p.tags.map((tag) => tag.id));
       } catch {
         router.push('/');
@@ -62,7 +64,7 @@ function EditPage({ slug }: { slug: string }) {
   };
 
   const handleDelete = async () => {
-    if (!post || !window.confirm('Are you sure you want to delete this post?')) return;
+    if (!post || !window.confirm(t('edit.confirmDelete'))) return;
     try {
       await deletePost(post.id);
       router.push('/stats');
@@ -72,7 +74,7 @@ function EditPage({ slug }: { slug: string }) {
   };
 
   if (loading) {
-    return <div className="text-center py-20 text-text-muted">Loading...</div>;
+    return <div className="text-center py-20 text-text-muted">{t('common.loading')}</div>;
   }
 
   if (!post) return null;
@@ -112,7 +114,7 @@ function EditPage({ slug }: { slug: string }) {
           onClick={handleDelete}
           className="text-sm text-red-400 hover:text-red-500 transition"
         >
-          Delete post
+          {t('edit.delete')}
         </button>
         <div className="flex gap-3">
           {post.status === 'draft' && (
@@ -121,7 +123,7 @@ function EditPage({ slug }: { slug: string }) {
               disabled={saving}
               className="px-5 py-2.5 rounded-xl bg-pastel-mint hover:bg-pastel-mint-dark text-sm text-text-primary transition disabled:opacity-50"
             >
-              Publish
+              {t('edit.publish')}
             </button>
           )}
           {post.status === 'published' && (
@@ -130,7 +132,7 @@ function EditPage({ slug }: { slug: string }) {
               disabled={saving}
               className="px-5 py-2.5 rounded-xl bg-surface-secondary text-sm text-text-secondary transition disabled:opacity-50"
             >
-              Unpublish
+              {t('edit.unpublish')}
             </button>
           )}
           <button
@@ -138,7 +140,7 @@ function EditPage({ slug }: { slug: string }) {
             disabled={saving || !title.trim()}
             className="px-5 py-2.5 rounded-xl bg-pastel-lavender hover:bg-pastel-lavender-dark text-sm text-text-primary transition disabled:opacity-50"
           >
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? t('edit.saving') : t('edit.save')}
           </button>
         </div>
       </div>

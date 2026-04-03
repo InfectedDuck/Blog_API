@@ -108,6 +108,36 @@ export const createComment = (postId: number, body: string) =>
     body: JSON.stringify({ body }),
   });
 
+// Bookmarks
+export const toggleBookmark = (postId: number) =>
+  apiFetch<{ bookmarked: boolean }>(`/posts/${postId}/bookmark`, { method: 'POST' });
+
+export const checkBookmark = (postId: number) =>
+  apiFetch<{ bookmarked: boolean }>(`/posts/${postId}/bookmark`);
+
+export const getBookmarks = (page = 1) =>
+  apiFetch<{ data: Post[]; meta: PaginationMeta }>(`/bookmarks?page=${page}`);
+
+// Follows
+export const toggleFollow = (userId: number) =>
+  apiFetch<{ following: boolean; followersCount: number }>(`/users/${userId}/follow`, { method: 'POST' });
+
+export const getFollowStats = (userId: number) =>
+  apiFetch<{ followersCount: number; followingCount: number; isFollowing: boolean }>(`/users/${userId}/follow-stats`);
+
+// Notifications
+export const getNotifications = (page = 1) =>
+  apiFetch<{ data: NotificationItem[]; meta: PaginationMeta; unreadCount: number }>(`/notifications?page=${page}`);
+
+export const getUnreadCount = () =>
+  apiFetch<{ count: number }>('/notifications/unread-count');
+
+export const markAllNotificationsRead = () =>
+  apiFetch('/notifications/read-all', { method: 'PATCH' });
+
+export const markNotificationRead = (id: number) =>
+  apiFetch(`/notifications/${id}/read`, { method: 'PATCH' });
+
 // Tags
 export const getTags = () => apiFetch<Tag[]>('/tags');
 
@@ -136,6 +166,16 @@ export interface User {
   avatarUrl?: string;
   darkMode: boolean;
   accentColor: string;
+  createdAt: string;
+}
+
+export interface NotificationItem {
+  id: number;
+  type: string;
+  message: string;
+  link?: string;
+  read: boolean;
+  actor: User;
   createdAt: string;
 }
 

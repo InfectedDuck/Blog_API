@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
+import { useLang } from '../../context/LangContext';
 import Logo from '../../components/Logo';
 
 export default function LoginPage() {
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t } = useLang();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +24,7 @@ export default function LoginPage() {
       await login(email, password);
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Кіру сәтсіз аяқталды');
+      setError(err.message || 'Error');
     } finally {
       setLoading(false);
     }
@@ -35,47 +37,23 @@ export default function LoginPage() {
           <Logo size="md" />
         </div>
         <div className="bg-surface-secondary rounded-2xl shadow-sm border border-surface-tertiary p-8">
-          <h1 className="text-2xl font-light text-center text-text-primary mb-8">
-            Қайта қош келдіңіз
-          </h1>
+          <h1 className="text-2xl font-light text-center text-text-primary mb-8">{t('login.title')}</h1>
 
           {error && (
-            <div className="mb-4 p-3 rounded-xl bg-pastel-pink text-sm text-text-secondary text-center">
-              {error}
-            </div>
+            <div className="mb-4 p-3 rounded-xl bg-pastel-pink text-sm text-text-secondary text-center">{error}</div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
-            />
-            <input
-              type="password"
-              placeholder="Құпия сөз — Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-dark text-text-primary text-sm font-medium transition disabled:opacity-50"
-            >
-              {loading ? 'Кіруде...' : 'Кіру — Sign In'}
+            <input type="email" placeholder={t('login.email')} value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition" />
+            <input type="password" placeholder={t('login.password')} value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-3 rounded-xl bg-surface border-none outline-none text-sm text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-accent transition" />
+            <button type="submit" disabled={loading} className="w-full py-3 rounded-xl bg-accent hover:bg-accent-dark text-text-primary text-sm font-medium transition disabled:opacity-50">
+              {loading ? t('login.submitting') : t('login.submit')}
             </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-text-muted">
-            Аккаунтыңыз жоқ па?{' '}
-            <Link href="/register" className="text-text-secondary hover:text-text-primary transition">
-              Тіркелу
-            </Link>
+            {t('login.noAccount')}{' '}
+            <Link href="/register" className="text-text-secondary hover:text-text-primary transition">{t('login.signUp')}</Link>
           </p>
         </div>
       </div>

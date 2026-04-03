@@ -9,11 +9,17 @@ import { PostsModule } from '../src/posts/posts.module';
 import { CommentsModule } from '../src/comments/comments.module';
 import { TagsModule } from '../src/tags/tags.module';
 import { LikesModule } from '../src/likes/likes.module';
+import { FollowsModule } from '../src/follows/follows.module';
+import { BookmarksModule } from '../src/bookmarks/bookmarks.module';
+import { NotificationsModule } from '../src/notifications/notifications.module';
 import { User } from '../src/users/entities/user.entity';
 import { Post } from '../src/posts/entities/post.entity';
 import { Comment } from '../src/comments/entities/comment.entity';
 import { Tag } from '../src/tags/entities/tag.entity';
 import { Like } from '../src/likes/entities/like.entity';
+import { Follow } from '../src/follows/entities/follow.entity';
+import { Bookmark } from '../src/bookmarks/entities/bookmark.entity';
+import { Notification } from '../src/notifications/entities/notification.entity';
 import { DataSource } from 'typeorm';
 
 describe('Blog CMS API (e2e)', () => {
@@ -29,7 +35,7 @@ describe('Blog CMS API (e2e)', () => {
         TypeOrmModule.forRoot({
           type: 'better-sqlite3',
           database: ':memory:',
-          entities: [User, Post, Comment, Tag, Like],
+          entities: [User, Post, Comment, Tag, Like, Follow, Bookmark, Notification],
           synchronize: true,
           dropSchema: true,
         }),
@@ -39,6 +45,9 @@ describe('Blog CMS API (e2e)', () => {
         CommentsModule,
         TagsModule,
         LikesModule,
+        FollowsModule,
+        BookmarksModule,
+        NotificationsModule,
       ],
     }).compile();
 
@@ -228,12 +237,13 @@ describe('Blog CMS API (e2e)', () => {
       postSlug = res.body.slug;
     });
 
-    it('POST /api/posts - reader cannot create post', async () => {
-      await request(app.getHttpServer())
+    it('POST /api/posts - any authenticated user can create post', async () => {
+      const res = await request(app.getHttpServer())
         .post('/api/posts')
         .set('Authorization', `Bearer ${readerToken}`)
-        .send({ title: 'Nope', content: 'Not allowed' })
-        .expect(403);
+        .send({ title: 'Reader Post', content: 'Anyone can write now' })
+        .expect(201);
+      expect(res.body.title).toBe('Reader Post');
     });
 
     it('GET /api/posts - should list published posts', async () => {
