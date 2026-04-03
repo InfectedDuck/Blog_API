@@ -16,6 +16,7 @@ describe('PostsService', () => {
     slug: 'test-post',
     content: 'Test content',
     status: 'published',
+    views: 0,
     author: { id: 1, username: 'author' },
     tags: [],
   };
@@ -26,6 +27,7 @@ describe('PostsService', () => {
       save: jest.fn().mockResolvedValue(mockPost),
       findOne: jest.fn(),
       remove: jest.fn(),
+      increment: jest.fn().mockResolvedValue(undefined),
       createQueryBuilder: jest.fn(() => ({
         leftJoinAndSelect: jest.fn().mockReturnThis(),
         andWhere: jest.fn().mockReturnThis(),

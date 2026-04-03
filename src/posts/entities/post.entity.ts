@@ -12,6 +12,7 @@ import {
 import { User } from '../../users/entities/user.entity.js';
 import { Tag } from '../../tags/entities/tag.entity.js';
 import { Comment } from '../../comments/entities/comment.entity.js';
+import { Like } from '../../likes/entities/like.entity.js';
 
 @Entity('posts')
 export class Post {
@@ -33,6 +34,9 @@ export class Post {
   @Column({ default: 'draft' })
   status: string;
 
+  @Column({ default: 0 })
+  views: number;
+
   @Column({ nullable: true })
   publishedAt: Date;
 
@@ -51,4 +55,7 @@ export class Post {
 
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
+
+  @OneToMany(() => Like, (like) => like.post)
+  likes: Like[];
 }

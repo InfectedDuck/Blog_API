@@ -69,6 +69,57 @@ export class PostsService {
     return post;
   }
 
+  async trackView(slug: string): Promise<void> {
+    const post = await this.postsRepository.findOne({ where: { slug } });
+    if (!post) throw new NotFoundException('Post not found');
+    await this.postsRepository.increment({ id: post.id }, 'views', 1);
+  }
+
+  async getAuthorStats(authorId: number) {
+    const posts = await this.postsRepository
+      .createQueryBuilder('post')
+      .leftJoin('post.likes', 'like')
+      .leftJoin('post.comments', 'comment')
+      .select([
+        'post.id AS id',
+        'post.title AS title',
+        'post.slug AS slug',
+        'post.status AS status',
+        'post.views AS views',
+        'post.createdAt AS createdAt',
+        'post.publishedAt AS publishedAt',
+        'COUNT(DISTINCT like.id) AS likesCount',
+        'COUNT(DISTINCT comment.id) AS commentsCount',
+      ])
+      .where('post.authorId = :authorId', { authorId })
+      .groupBy('post.id')
+      .orderBy('post.createdAt', 'DESC')
+      .getRawMany();
+
+    const totals = posts.reduce(
+      (acc, post) => {
+        acc.totalPosts++;
+        if (post.status === 'published') acc.totalPublished++;
+        else acc.totalDrafts++;
+        acc.totalViews += Number(post.views) || 0;
+        acc.totalLikes += Number(post.likesCount) || 0;
+        acc.totalComments += Number(post.commentsCount) || 0;
+        return acc;
+      },
+      { totalPosts: 0, totalPublished: 0, totalDrafts: 0, totalViews: 0, totalLikes: 0, totalComments: 0 },
+    );
+
+    return {
+      posts: posts.map((p) => ({
+        ...p,
+        views: Number(p.views) || 0,
+        likesCount: Number(p.likesCount) || 0,
+        commentsCount: Number(p.commentsCount) || 0,
+      })),
+      totals,
+    };
+  }
+
   async create(dto: CreatePostDto, authorId: number): Promise<Post> {
     const slug = await this.generateUniqueSlug(dto.title);
     const tags = dto.tagIds ? await this.tagsService.findByIds(dto.tagIds) : [];

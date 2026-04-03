@@ -8,10 +8,12 @@ import { UsersModule } from '../src/users/users.module';
 import { PostsModule } from '../src/posts/posts.module';
 import { CommentsModule } from '../src/comments/comments.module';
 import { TagsModule } from '../src/tags/tags.module';
+import { LikesModule } from '../src/likes/likes.module';
 import { User } from '../src/users/entities/user.entity';
 import { Post } from '../src/posts/entities/post.entity';
 import { Comment } from '../src/comments/entities/comment.entity';
 import { Tag } from '../src/tags/entities/tag.entity';
+import { Like } from '../src/likes/entities/like.entity';
 import { DataSource } from 'typeorm';
 
 describe('Blog CMS API (e2e)', () => {
@@ -27,7 +29,7 @@ describe('Blog CMS API (e2e)', () => {
         TypeOrmModule.forRoot({
           type: 'better-sqlite3',
           database: ':memory:',
-          entities: [User, Post, Comment, Tag],
+          entities: [User, Post, Comment, Tag, Like],
           synchronize: true,
           dropSchema: true,
         }),
@@ -36,6 +38,7 @@ describe('Blog CMS API (e2e)', () => {
         PostsModule,
         CommentsModule,
         TagsModule,
+        LikesModule,
       ],
     }).compile();
 

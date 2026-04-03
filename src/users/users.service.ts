@@ -42,4 +42,21 @@ export class UsersService {
     user.role = role;
     return this.usersRepository.save(user);
   }
+
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { username } });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  async getPublicProfile(username: string) {
+    const user = await this.findByUsername(username);
+    return {
+      id: user.id,
+      username: user.username,
+      bio: user.bio,
+      role: user.role,
+      createdAt: user.createdAt,
+    };
+  }
 }

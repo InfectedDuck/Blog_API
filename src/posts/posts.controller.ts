@@ -40,10 +40,25 @@ export class PostsController {
     return this.postsService.findAll(query, user?.id, user?.role);
   }
 
+  @Get('author/stats')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('author', 'admin')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get statistics for the authenticated author\'s posts' })
+  getAuthorStats(@CurrentUser() user: { id: number }) {
+    return this.postsService.getAuthorStats(user.id);
+  }
+
   @Get(':slug')
   @ApiOperation({ summary: 'Get post by slug' })
   findOne(@Param('slug') slug: string) {
     return this.postsService.findBySlug(slug);
+  }
+
+  @Post(':slug/view')
+  @ApiOperation({ summary: 'Track a view for a post' })
+  trackView(@Param('slug') slug: string) {
+    return this.postsService.trackView(slug);
   }
 
   @Post()

@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module.js';
 import { PostsModule } from './posts/posts.module.js';
 import { CommentsModule } from './comments/comments.module.js';
 import { TagsModule } from './tags/tags.module.js';
+import { LikesModule } from './likes/likes.module.js';
+import { AiModule } from './ai/ai.module.js';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { TagsModule } from './tags/tags.module.js';
     PostsModule,
     CommentsModule,
     TagsModule,
+    LikesModule,
+    AiModule,
   ],
 })
 export class AppModule {}
